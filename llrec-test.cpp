@@ -85,9 +85,25 @@ int main(int argc, char* argv[])
     cout << "Original list: ";
     print(head);
 
-    // Test out your linked list code
 
+    Node* smaller = nullptr;
+    Node* larger = nullptr;
+    int pivot = 5;
+    llpivot(head, smaller, larger, pivot);
 
+    cout << "Smaller list (<= " << pivot << "): ";
+    print(smaller);
+    cout << "Larger list (> " << pivot << "): ";
+    print(larger);
+
+    cout << "Filtering out odd numbers from smaller list..." << endl;
+    smaller = llfilter(smaller, IsOdd());
+    cout << "Filtered smaller list: ";
+    print(smaller);
+
+    dealloc(smaller);
+    dealloc(larger);
+    dealloc(head);
 
     
     return 0;

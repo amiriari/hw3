@@ -11,7 +11,7 @@
 #include "circuit.h"
 #include "event.h"
 
-Circuit::Circuit() : m_current_time(0)
+Circuit::Circuit() : m_current_time(0), m_pq(2) 
 {
     
 }
@@ -78,7 +78,7 @@ bool Circuit::parse(const char* fname)
                 m_wires.push_back(new Wire(stoi(s_id), s_name));
             }
         }
-        if(line == "GATES")
+        else if (line == "GATES")
         {
             std::string t_line;
             getline(inFile,t_line);
@@ -99,7 +99,7 @@ bool Circuit::parse(const char* fname)
                     getline(ss, s_output, ',');
                     m_gates.push_back(new And2Gate(m_wires[stoi(s_in1)], m_wires[stoi(s_in2)], m_wires[stoi(s_output)]));
                 }
-                if(s_type == "OR2")
+                else if(s_type == "OR2")
                 {
                     std::string s_in1;
                     getline(ss, s_in1, ',');
@@ -109,10 +109,17 @@ bool Circuit::parse(const char* fname)
                     getline(ss, s_output, ',');
                     m_gates.push_back(new Or2Gate(m_wires[stoi(s_in1)], m_wires[stoi(s_in2)], m_wires[stoi(s_output)]));
                 }
+                else if (s_type == "NOT")
+                {
+                    std::string s_in, s_output;
+                    getline(ss, s_in, ',');
+                    getline(ss, s_output, ',');
+                    m_gates.push_back(new NotGate(m_wires[stoi(s_in)], m_wires[stoi(s_output)]));
+                }
                 //Add code here to support the NOT gate type
             }
         }
-        if(line == "INJECT")
+        else if(line == "INJECT")
         {
             std::string t_line;
             getline(inFile,t_line);
@@ -128,7 +135,7 @@ bool Circuit::parse(const char* fname)
                 std::string s_state;
                 getline(ss, s_state, ',');
             	Event* e = new Event {static_cast<uint64_t>(stoi(s_time)),m_wires[stoi(s_wire)],s_state[0]};
-                //std::cout << s_time << "," << s_wire << "," << s_state << std::endl;
+                
             	m_pq.push(e);
             }
         }
